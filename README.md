@@ -49,6 +49,24 @@ When workflows are defined as code, they become more maintainable, versionable, 
 Use Airflow to author workflows (Dags) that orchestrate tasks. The Airflow scheduler executes your tasks on an array of workers while following the specified dependencies. Rich command line utilities make performing complex surgeries on Dags a snap. The rich user interface makes it easy to visualize pipelines running in production, monitor progress, and troubleshoot issues when needed.
 
 <!-- END Apache Airflow, please keep comment here to allow auto update of PyPI readme.md -->
+
+## Creata Local Deployment
+
+Creata ERP report scheduling is maintained under `creata/`.
+
+Run Docker Compose from:
+
+```powershell
+cd C:\Users\creata_f01\Documents\Codex\airflow_repo_compare\creata
+$env:Path = 'C:\Program Files\Docker\Docker\resources\bin;' + $env:Path
+docker compose build
+docker compose up airflow-init
+docker compose up -d
+```
+
+If Docker reports `no configuration file provided: not found`, the command was
+run from the wrong folder. See `creata/README.md` and `creata/OPERATIONS.md`.
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of contents**

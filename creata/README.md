@@ -13,6 +13,28 @@ report automation scheduling. The report extraction and analysis code stays in
 `C:\Users\creata_f01\Documents\Codex\creata_agent_chi`; Airflow mounts that
 workspace and calls its scripts.
 
+## Repository Boundary
+
+Use this repo for scheduling and runtime operations only:
+
+- Docker Compose services.
+- Airflow image customization.
+- Dag files.
+- Schedule definitions.
+- Airflow UI/runtime state.
+- Runtime `.env` used by Airflow containers.
+
+Use `creata_agent_chi` for report implementation:
+
+- SQL templates.
+- Python report runners.
+- Report config examples.
+- Generated report outputs.
+- Validation documentation.
+
+Do not duplicate report SQL or report scripts into this repo. Airflow should
+mount the ERP repo and call its runner scripts.
+
 ## Files
 
 - `creata/docker-compose.yaml` - Airflow services and project volume mounts.
@@ -20,6 +42,7 @@ workspace and calls its scripts.
   and Python runtime dependencies needed by report scripts.
 - `creata/.env.example` - Runtime, SQL Server, report, and Graph mail variables.
 - `creata/dags/momo_daily_sales_report_dag.py` - Daily 09:00 Asia/Taipei Dag.
+- `OPERATIONS.md` - Day-two commands, validation, and troubleshooting.
 - `creata_agent_chi/scripts/momo_daily_sales_report.py` - Report generation and
   Graph mail delivery script.
 - `creata_agent_chi/configs/momo_daily_sales.example.json` - MOMO report settings.
@@ -30,6 +53,8 @@ workspace and calls its scripts.
 Run from the `creata` folder:
 
 ```powershell
+cd C:\Users\creata_f01\Documents\Codex\airflow_repo_compare\creata
+$env:Path = 'C:\Program Files\Docker\Docker\resources\bin;' + $env:Path
 Copy-Item .env.example .env
 notepad .env
 docker compose build
@@ -44,6 +69,14 @@ http://localhost:8080
 ```
 
 The default example user comes from `.env`. Change it before live use.
+
+If Docker says:
+
+```text
+no configuration file provided: not found
+```
+
+you are not in the `creata` folder.
 
 ## Required Secrets
 
@@ -63,6 +96,19 @@ The workspace mount defaults to:
 ```text
 CREATA_WORKSPACES_HOST_DIR=C:/Users/creata_f01/Documents/Codex
 CREATA_AGENT_REPO=/opt/airflow/workspaces/creata_agent_chi
+```
+
+During local branch testing, `CREATA_AGENT_REPO` may point to a temporary
+worktree such as:
+
+```text
+/opt/airflow/workspaces/creata_agent_chi_airflow_momo
+```
+
+After the ERP branch is merged, switch it back to:
+
+```text
+/opt/airflow/workspaces/creata_agent_chi
 ```
 
 The Docker image installs Microsoft ODBC Driver 18 for SQL Server. The default
@@ -168,6 +214,18 @@ For a live SQL dry-run without sending email:
 docker compose run --rm airflow-worker python /opt/airflow/workspaces/creata_agent_chi/scripts/momo_daily_sales_report.py --dry-run --report-date 2026-06-03
 ```
 
+Test the Dag call path:
+
+```powershell
+docker compose exec -T airflow-worker airflow dags test momo_daily_sales_report 2026-06-03
+```
+
+Check loaded Dags:
+
+```powershell
+docker compose exec -T airflow-worker airflow dags list
+```
+
 ## Validation Checklist
 
 Before enabling live send:
@@ -181,3 +239,8 @@ Before enabling live send:
 6. Confirm recipients and Graph sender are correct.
 7. Set `MOMO_REPORT_DRY_RUN=false` only after validation passes and live delivery
    is approved.
+
+## Maintenance
+
+See `OPERATIONS.md` for routine commands, restart procedures, log checks,
+and the production cutover checklist.
