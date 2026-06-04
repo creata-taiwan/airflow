@@ -30,8 +30,9 @@ x-airflow-common:
     AIRFLOW__API_AUTH__JWT_ISSUER: ${AIRFLOW__API_AUTH__JWT_ISSUER:-airflow}
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
     AIRFLOW_CONFIG: /opt/airflow/config/airflow.cfg
-    PYTHONPATH: /opt/airflow/project
+    PYTHONPATH: /opt/airflow/project:/opt/airflow/workspaces/creata_agent_chi
     CREATA_PROJECT_ROOT: /opt/airflow/project
+    CREATA_AGENT_REPO: ${CREATA_AGENT_REPO:-/opt/airflow/workspaces/creata_agent_chi}
     TZ: Asia/Taipei
     _PIP_ADDITIONAL_REQUIREMENTS: ''
   volumes:
@@ -39,10 +40,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
-    - ${AIRFLOW_PROJ_DIR:-.}/scripts:/opt/airflow/project/scripts:ro
-    - ${AIRFLOW_PROJ_DIR:-.}/configs:/opt/airflow/project/configs:ro
-    - ${AIRFLOW_PROJ_DIR:-.}/sql:/opt/airflow/project/sql:ro
-    - ${AIRFLOW_PROJ_DIR:-.}/outputs:/opt/airflow/project/outputs
+    - ${CREATA_WORKSPACES_HOST_DIR:-C:/Users/creata_f01/Documents/Codex}:/opt/airflow/workspaces
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on

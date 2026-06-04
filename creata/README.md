@@ -9,21 +9,21 @@
 # Creata Airflow Docker Runbook
 
 This project now includes an Apache Airflow 3.2.2 Docker Compose runtime for ERP
-report automation. The Compose file follows the Apache Airflow Docker quick-start
-shape: PostgreSQL metadata DB, Redis broker, API server, scheduler, Dag
-processor, worker, triggerer, and an init service.
+report automation scheduling. The report extraction and analysis code stays in
+`C:\Users\creata_f01\Documents\Codex\creata_agent_chi`; Airflow mounts that
+workspace and calls its scripts.
 
 ## Files
 
 - `creata/docker-compose.yaml` - Airflow services and project volume mounts.
 - `creata/Dockerfile` - Extends the Airflow image with Microsoft ODBC Driver 18
-  and Python report dependencies.
+  and Python runtime dependencies needed by report scripts.
 - `creata/.env.example` - Runtime, SQL Server, report, and Graph mail variables.
 - `creata/dags/momo_daily_sales_report_dag.py` - Daily 09:00 Asia/Taipei Dag.
-- `creata/scripts/momo_daily_sales_report.py` - Standalone report generation and Graph
-  mail delivery script.
-- `creata/configs/momo_daily_sales.example.json` - MOMO report settings.
-- `creata/sql/reports/momo_daily_sales_*.sql` - SELECT-only SQL templates.
+- `creata_agent_chi/scripts/momo_daily_sales_report.py` - Report generation and
+  Graph mail delivery script.
+- `creata_agent_chi/configs/momo_daily_sales.example.json` - MOMO report settings.
+- `creata_agent_chi/sql/reports/momo_daily_sales_*.sql` - SELECT-only SQL templates.
 
 ## First Run
 
@@ -56,6 +56,13 @@ GRAPH_TENANT_ID=
 GRAPH_CLIENT_ID=
 GRAPH_CLIENT_SECRET=
 GRAPH_SENDER=it@creata.com.tw
+```
+
+The workspace mount defaults to:
+
+```text
+CREATA_WORKSPACES_HOST_DIR=C:/Users/creata_f01/Documents/Codex
+CREATA_AGENT_REPO=/opt/airflow/workspaces/creata_agent_chi
 ```
 
 The Docker image installs Microsoft ODBC Driver 18 for SQL Server. The default
@@ -146,19 +153,19 @@ Do not add arbitrary SQL fragments to the channel filter.
 Generate a no-database sample report and email preview:
 
 ```powershell
-docker compose run --rm airflow-worker python /opt/airflow/project/scripts/momo_daily_sales_report.py --sample-data --dry-run --report-date 2026-06-03
+docker compose run --rm airflow-worker python /opt/airflow/workspaces/creata_agent_chi/scripts/momo_daily_sales_report.py --sample-data --dry-run --report-date 2026-06-03
 ```
 
 Generated files are written under:
 
 ```text
-outputs/airflow/momo_daily_sales/
+C:\Users\creata_f01\Documents\Codex\creata_agent_chi\outputs\airflow\momo_daily_sales\
 ```
 
 For a live SQL dry-run without sending email:
 
 ```powershell
-docker compose run --rm airflow-worker python /opt/airflow/project/scripts/momo_daily_sales_report.py --dry-run --report-date 2026-06-03
+docker compose run --rm airflow-worker python /opt/airflow/workspaces/creata_agent_chi/scripts/momo_daily_sales_report.py --dry-run --report-date 2026-06-03
 ```
 
 ## Validation Checklist
