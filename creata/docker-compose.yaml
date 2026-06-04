@@ -30,7 +30,7 @@ x-airflow-common:
     AIRFLOW__API_AUTH__JWT_ISSUER: ${AIRFLOW__API_AUTH__JWT_ISSUER:-airflow}
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
     AIRFLOW_CONFIG: /opt/airflow/config/airflow.cfg
-    PYTHONPATH: /opt/airflow/project:/opt/airflow/workspaces/creata_agent_chi
+    PYTHONPATH: /opt/airflow/project:${CREATA_AGENT_REPO:-/opt/airflow/workspaces/creata_agent_chi}
     CREATA_PROJECT_ROOT: /opt/airflow/project
     CREATA_AGENT_REPO: ${CREATA_AGENT_REPO:-/opt/airflow/workspaces/creata_agent_chi}
     TZ: Asia/Taipei
