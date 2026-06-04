@@ -1,0 +1,11 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements. See the NOTICE file
+# distributed with Apache Airflow for additional information
+# regarding copyright ownership. The ASF licenses this file to you under
+# the Apache License, Version 2.0.
+#
+openpyxl>=3.1,<4
+pyodbc>=5.2,<6
+python-dotenv>=1.0,<2
+requests>=2.32,<3
